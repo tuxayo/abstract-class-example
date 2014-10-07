@@ -1,30 +1,39 @@
 public class Sum implements Formula {
-	Formula operand1, operand2;
+	Formula[] operands;
 
-	public Sum(Formula operand1, Formula operand2) {
-		this.operand1 = operand1;
-		this.operand2 = operand2;
-	}
-
-	public double asValue() {
-		double value1 = operand1.asValue();
-		double value2 = operand2.asValue();
-
-		return value1 + value2;
+	public Sum(Formula... operands) {
+		this.operands = operands;
 	}
 
 	public String asString() {
-		String string1 = operand1.asString();
-		String string2 = operand2.asString();
-		return "(" + string1 + "+" + string2 + ")";
-	}
-
-	public String asString2() {
 		StringBuilder sb = new StringBuilder("(");
-		sb.append(operand1.asString());
-		sb.append("+");
-		sb.append(operand2.asString());
+		for (int k = 0; k < operands.length; k++) {
+			sb.append(operands[k].asString());
+			if (k != operands.length - 1)
+				sb.append(symbol());
+		}
 		sb.append(")");
 		return sb.toString();
 	}
+
+	private String symbol() {
+		return "+";
+	}
+
+	public double asValue() {
+		double acc = initialValue();
+		for (int i = 0; i < operands.length; i++) {
+			acc = cummulativeValue(acc, operands[i].asValue());
+		}
+		return acc;
+	}
+
+	private double cummulativeValue(double acc, double val) {
+		return acc + val;
+	}
+
+	public double initialValue() {
+		return 0;
+	}
+
 }
