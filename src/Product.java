@@ -1,34 +1,44 @@
 public class Product implements Formula {
-	Formula operand1, operand2;
+	Formula[] operands;
 
-	public Product(Formula operand1, Formula operand2) {
-		this.operand1 = operand1;
-		this.operand2 = operand2;
+	public Product(Formula... operands) {
+		this.operands = operands;
 	}
 
 	public double asValue() {
-		double value1 = operand1.asValue();
-		double value2 = operand2.asValue();
-
-		return value1 * value2;
+		double accumulator = initialValue();
+		for (int i = 0; i < operands.length; i++) {
+			accumulator = cummulativeValue(accumulator, operands[i].asValue());
+		}
+		return accumulator;
 	}
 
 	public String asString() {
 		StringBuilder sb = new StringBuilder("(");
-		sb.append(operand1.asString());
-		sb.append(symbol());
-		sb.append(operand2.asString());
+		for (int k = 0; k < operands.length; k++) {
+			sb.append(operands[k].asString());
+			if (k != operands.length - 1)
+				sb.append(symbol());
+		}
 		sb.append(")");
 		return sb.toString();
 	}
 
-	public String asStringConcat() {
-		String string1 = operand1.asString();
-		String string2 = operand2.asString();
-		return "(" + string1 + symbol() + string2 + ")";
-	}
+//	public String asStringConcat() {
+//		String string1 = operand1.asString();
+//		String string2 = operand2.asString();
+//		return "(" + string1 + symbol() + string2 + ")";
+//	}
 
+	private double cummulativeValue(double accumulator, double value) {
+		return accumulator * value;
+	}
+	
 	public String symbol() {
 		return "*";
+	}
+	
+	public double initialValue() {
+		return 1;
 	}
 }
